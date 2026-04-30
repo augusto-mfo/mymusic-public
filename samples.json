@@ -1,5 +1,5 @@
 [
-    { "name": "Keys of Moon - Under The Sun",   "url": "/samples/track-01.mp3" },
-    { "name": "Handel – Water Music – Suite No.2 In D Major by Bath Festival Orchestra",   "url": "/samples/track-02.mp3" },
-    { "name": "Brotherhood by Monplaisir", "url": "/samples/track-03.mp3" }
+    { "name": "Keys of Moon - Under The Sun",   "url": "samples/track-01.mp3" },
+    { "name": "Handel – Water Music – Suite No.2 In D Major by Bath Festival Orchestra",   "url": "samples/track-02.mp3" },
+    { "name": "Brotherhood by Monplaisir", "url": "samples/track-03.mp3" }
 ]
