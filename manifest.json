@@ -1,7 +1,7 @@
 {
   "name": "MyMusic",
   "short_name": "MyMusic",
-  "start_url": "/MyMusic-Public/",
+  "start_url": "/mymusic-public/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
