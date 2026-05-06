@@ -4,12 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="./manifest.json" />
+    <!--
+        manifest.json is versioned with a query string so mobile browsers
+        re-fetch it on every new release instead of serving a stale cached copy.
+        1.0.0 is replaced by Vite at build time (see vite.config.js).
+        To update the manifest: bump APP_VERSION in src/version.js — that's it.
+    -->
+    <link rel="manifest" href="./manifest.json?v=1.0.0" />
     <title>MYMUSIC</title>
-  <script type="module" crossorigin src="/mymusic-public/assets/index-C8fmwmpj.js"></script>
-  <link rel="stylesheet" crossorigin href="/mymusic-public/assets/index-DN-diWdO.css">
+  <script type="module" crossorigin src="/mymusic-public/assets/index-CRT25SJd.js"></script>
+  <link rel="stylesheet" crossorigin href="/mymusic-public/assets/index-BgHPnlKC.css">
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root"></div>
 </body>
 </html>
