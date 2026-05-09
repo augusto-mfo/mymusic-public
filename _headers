@@ -1,0 +1,25 @@
+# Netlify headers — place this file in your publish directory (shell/dist/)
+# or at the repo root if Netlify picks it up from there.
+#
+# The service worker MUST be served with no-cache headers.
+# If the browser HTTP-caches the SW file, version bumps are invisible
+# until the HTTP cache expires (browsers allow up to 24 h for SWs,
+# but some Android Chrome versions apply general HTTP cache rules instead).
+
+/mymusic-public/service-worker.js
+  Cache-Control: no-store, no-cache, must-revalidate
+  Pragma: no-cache
+
+# index.html should also never be cached so the app shell is always fresh.
+/mymusic-public/index.html
+  Cache-Control: no-store, no-cache, must-revalidate
+  Pragma: no-cache
+
+/mymusic-public/
+  Cache-Control: no-store, no-cache, must-revalidate
+  Pragma: no-cache
+
+# Vite-hashed assets (JS/CSS bundles) can be cached indefinitely — their
+# filenames change when content changes, so stale cache is not a concern.
+/mymusic-public/assets/*
+  Cache-Control: public, max-age=31536000, immutable
