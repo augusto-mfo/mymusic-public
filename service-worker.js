@@ -1,9 +1,9 @@
 // MyMusic Service Worker
-// "2.2.7" is replaced at build time by Vite's `define` (see vite.config.js).
+// "2.3.0" is replaced at build time by Vite's `define` (see vite.config.js).
 // This file lives in src/ so Vite processes it — unlike public/ files which are
 // copied verbatim and never have defines substituted.
 
-const VERSION    = typeof "2.2.7" !== "undefined" ? "2.2.7" : "dev";
+const VERSION    = typeof "2.3.0" !== "undefined" ? "2.3.0" : "dev";
 const CACHE_NAME = `mymusic-v${VERSION}`;
 
 // Static assets that are safe to cache permanently.
