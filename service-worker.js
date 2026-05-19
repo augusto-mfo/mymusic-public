@@ -1,31 +1,24 @@
-// MyMusic Service Worker
-// "2.3.0" is replaced at build time by Vite's `define` (see vite.config.js).
-// This file lives in src/ so Vite processes it — unlike public/ files which are
-// copied verbatim and never have defines substituted.
+// ── Version Control — Service Worker Template ────────────────────────────────
+//
+// "2.3.3" and "mymusic" are replaced at build time by the
+// viteVersionControl() plugin (packages/version-control/vite-plugin/index.js).
+//
+// This file must live in src/ (not public/) so Vite processes it.
+// The plugin reads it, substitutes the placeholders, and writes it to dist/.
 
-const VERSION    = typeof "2.3.0" !== "undefined" ? "2.3.0" : "dev";
-const CACHE_NAME = `mymusic-v${VERSION}`;
+const VERSION    = typeof "2.3.3" !== "undefined" ? "2.3.3" : "dev";
+const SLUG       = typeof "mymusic"    !== "undefined" ? "mymusic"    : "app";
+const BASE_PATH  = typeof "/mymusic-public/"    !== "undefined" ? "/mymusic-public/"    : "/";
 
-// Static assets that are safe to cache permanently.
-// Vite-hashed JS/CSS bundles are NOT listed here — they're handled by the
-// network-first strategy below and cached only as a fallback.
-const STATIC_ASSETS = [
-    "/mymusic-public/favicon.ico",
-    "/mymusic-public/icon-192.png",
-    "/mymusic-public/icon-512.png",
-    "/mymusic-public/screenshots/wide.png",
-    "/mymusic-public/screenshots/portrait.png",
-];
+const CACHE_NAME = `${SLUG}-v${VERSION}`;
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener("install", event => {
+    // Pre-cache just enough to survive offline. Vite-hashed bundles are handled
+    // by the network-first strategy below and cached lazily on first fetch.
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            // Pre-cache only the truly static, un-hashed assets.
-            return Promise.allSettled(
-                STATIC_ASSETS.map(url => cache.add(url).catch(() => null))
-            );
-        }).then(() => self.skipWaiting()) // activate immediately, don't wait for tab close
+        caches.open(CACHE_NAME)
+            .then(() => self.skipWaiting()) // activate immediately, don't wait for tab close
     );
 });
 
@@ -37,7 +30,7 @@ self.addEventListener("activate", event => {
                 keys
                     .filter(key => key !== CACHE_NAME)
                     .map(key => {
-                        console.log(`[SW] Deleting old cache: ${key}`);
+                        console.log(`[SW ${SLUG}] Deleting old cache: ${key}`);
                         return caches.delete(key);
                     })
             ))
@@ -72,10 +65,10 @@ self.addEventListener("fetch", event => {
     // Only intercept same-origin GETs
     if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
-    // Audio blobs / sample files: always go to the network, never cache
+    // Blob URLs and any path segment named "samples" — never cache
     if (url.protocol === "blob:" || url.pathname.includes("/samples/")) return;
 
-    // manifest.json — network-only, no caching, so the browser always sees updates
+    // manifest.json — network-only so the browser always sees updates
     if (url.pathname.endsWith("manifest.json")) {
         event.respondWith(
             fetch(request, { cache: "no-store" }).catch(() => caches.match(request))
@@ -83,9 +76,8 @@ self.addEventListener("fetch", event => {
         return;
     }
 
-    // ── HTML documents and JS/CSS bundles → NETWORK-FIRST ────────────────────
-    // This is the critical change: we always try the network first for anything
-    // that could change between releases. Cache is only a fallback for offline use.
+    // ── HTML, JS, CSS → NETWORK-FIRST ────────────────────────────────────────
+    // Always try the network first; cache is only a fallback for offline use.
     const isDocument = request.destination === "document" || url.pathname.endsWith(".html");
     const isScript   = request.destination === "script"   || url.pathname.endsWith(".js");
     const isStyle    = request.destination === "style"    || url.pathname.endsWith(".css");
@@ -94,32 +86,27 @@ self.addEventListener("fetch", event => {
         event.respondWith(
             fetch(request, { cache: "no-cache" })
                 .then(response => {
-                    // Got a fresh response — update the cache and return it
                     if (response && response.status === 200 && response.type === "basic") {
                         const clone = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                     }
                     return response;
                 })
-                .catch(() => {
-                    // Network failed (offline) — fall back to cache
-                    return caches.match(request).then(cached => {
+                .catch(() =>
+                    caches.match(request).then(cached => {
                         if (cached) return cached;
                         // Last resort for documents: return the app shell
-                        if (isDocument) return caches.match("/mymusic-public/index.html");
-                    });
-                })
+                        if (isDocument) return caches.match(`${BASE_PATH}index.html`);
+                    })
+                )
         );
         return;
     }
 
     // ── Static hashed assets (icons, images, fonts) → CACHE-FIRST ────────────
-    // These have content-hashes in their filenames (Vite output), so stale
-    // cache is not a concern — a changed file will have a different URL.
     event.respondWith(
         caches.match(request).then(cached => {
             if (cached) return cached;
-
             return fetch(request).then(response => {
                 if (!response || response.status !== 200 || response.type !== "basic") {
                     return response;
