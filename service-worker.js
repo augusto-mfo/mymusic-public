@@ -1,12 +1,12 @@
 // ── Version Control — Service Worker Template ────────────────────────────────
 //
-// "2.3.3" and "mymusic" are replaced at build time by the
+// "2.3.4" and "mymusic" are replaced at build time by the
 // viteVersionControl() plugin (packages/version-control/vite-plugin/index.js).
 //
 // This file must live in src/ (not public/) so Vite processes it.
 // The plugin reads it, substitutes the placeholders, and writes it to dist/.
 
-const VERSION    = typeof "2.3.3" !== "undefined" ? "2.3.3" : "dev";
+const VERSION    = typeof "2.3.4" !== "undefined" ? "2.3.4" : "dev";
 const SLUG       = typeof "mymusic"    !== "undefined" ? "mymusic"    : "app";
 const BASE_PATH  = typeof "/mymusic-public/"    !== "undefined" ? "/mymusic-public/"    : "/";
 
