@@ -1,7 +1,7 @@
 {
   "name": "MYMUSIC",
   "short_name": "MYMUSIC",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "Web MP3 player with graphic equalizer, spectrum analyser and workout mode.",
   "start_url": "/mymusic-public/",
   "scope": "/mymusic-public/",
